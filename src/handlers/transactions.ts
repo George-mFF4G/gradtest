@@ -49,15 +49,16 @@ router.post('/',verifyTokenAndAdmin,uploadImage, carType,async (req: express.Req
     }
   });
   
-  router.get('/:id/admin', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
+  router.get('/:id/admin/:trId', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
     try {
-      const vehicle = await operations.show(req.params.id);
+      const vehicle = await operations.show(req.params.trId);
       res.status(200).json({"transactions":vehicle});
     } catch (error) {
       res.status(500).json(`Cannot Get the vehicle. ${error}.`);
     }
   });
-  
+  //########################################################################
+  //########################################################################
   router.get('/:id/user', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
     try {
       const vehicle = await operations.showUserTransactions(req.params.id);
@@ -66,6 +67,8 @@ router.post('/',verifyTokenAndAdmin,uploadImage, carType,async (req: express.Req
       res.status(500).json(`Cannot Get the vehicle. ${error}.`);
     }
   });
+  //########################################################################
+  //########################################################################
   router.get('/:id/car/:carId', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
     try {
       const vehicle = await operations.showVehicleTransactions(req.params.carId as unknown as string);
@@ -75,15 +78,15 @@ router.post('/',verifyTokenAndAdmin,uploadImage, carType,async (req: express.Req
     }
   });
 
-  router.patch('/report/:id', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
+  router.patch('/:id/report/:trId', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
     try {
-      const vehicle = await operations.reportWaiting(req.params.id as unknown as string);
+      const vehicle = await operations.reportWaiting(req.params.trId as unknown as string);
       res.status(200).json({"transactions":vehicle});
     } catch (error) {
       res.status(500).json(`Cannot report the transaction. ${error}.`);
     }
   });
-  router.patch('/report/:id/approved', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
+  router.patch('/report/:id/approved', verifyTokenAndAdmin, async (req: Request, res: Response) => {
     try {
       const vehicle = await operations.reportApproved(req.params.id as unknown as string);
       res.status(200).json({"transactions":vehicle});
@@ -91,7 +94,7 @@ router.post('/',verifyTokenAndAdmin,uploadImage, carType,async (req: express.Req
       res.status(500).json(`cannot approve the transaction. ${error}.`);
     }
   });
-  router.patch('/report/:id/declined', verifyTokenAndAuthorization, async (req: Request, res: Response) => {
+  router.patch('/report/:id/declined', verifyTokenAndAdmin, async (req: Request, res: Response) => {
     try {
       const vehicle = await operations.reportDeclined(req.params.id as unknown as string);
       res.status(200).json({"transactions":vehicle});
